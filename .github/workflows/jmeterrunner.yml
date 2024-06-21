@@ -24,7 +24,7 @@ jobs:
         uses: justb4/jmeter-action@v1
         with:
           jmxFile: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
-          logLevel: INFO
+          logLevel: DEBUG
           jmeterProperties: ""
           jmeterPropertiesFile: ""
           systemProperties: ""
