@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - master
-      - feature/*
+      - 'feature/*'
   pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
 
@@ -25,10 +26,6 @@ jobs:
         with:
           jmxFile: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
           logLevel: DEBUG
-          jmeterProperties: ""
-          jmeterPropertiesFile: ""
-          systemProperties: ""
-          jmeterAdditionalParameters: ""
           jmeterPlugins: "jpgc-casutg"
 
       - name: Upload JMeter Test Results
