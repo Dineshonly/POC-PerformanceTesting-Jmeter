@@ -8,6 +8,10 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:   # <-- Add workflow_dispatch trigger here
+    branches:
+      - master
+      - 'feature/*'
 
 jobs:
 
