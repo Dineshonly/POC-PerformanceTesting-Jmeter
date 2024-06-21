@@ -1,7 +1,6 @@
----
-name: Performance Test Jmeter
+name: Performance Test JMeter
 
-on: 
+on:
   push:
     branches:
       - master
@@ -11,32 +10,35 @@ on:
 
 jobs:
 
-  action_build:
+  performance_test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Lint all YAML files in the directory
         uses: ibiqlik/action-yamllint@master
 
-      - name: Run JMeter Action
-        uses: ./
+      - name: Run JMeter Test
+        uses: justb4/jmeter-action@v1
         with:
-        testFilePath: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
-        outputReportsFolder: reports/
-        args: "--loglevel INFO"
-        plugins: "jpgc-casutg"
+          jmxFile: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
+          logLevel: INFO
+          jmeterProperties: ""
+          jmeterPropertiesFile: ""
+          systemProperties: ""
+          jmeterAdditionalParameters: ""
+          jmeterPlugins: "jpgc-casutg"
 
-        - name: List files in tests directory
-       run: ls -l POC-PerformanceTesting-Jmeter/tests
-
-      - uses: actions/upload-artifact@v1
+      - name: Upload JMeter Test Results
+        uses: actions/upload-artifact@v2
         with:
           name: jmeter-test-results
-          path: reports/
+          path: POC-PerformanceTesting-Jmeter/reports/
 
   image_scan:
-    needs: action_build
+    needs: performance_test
     runs-on: ubuntu-latest
 
     steps:
@@ -52,10 +54,8 @@ jobs:
         with:
           image: "localbuild/apache-jmeter-action:latest"
           acs-report-enable: true
-          # fail-build: false
-          # severity-cutoff: critical
 
-      - name: upload Anchore scan SARIF report
+      - name: Upload Anchore scan SARIF report
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
