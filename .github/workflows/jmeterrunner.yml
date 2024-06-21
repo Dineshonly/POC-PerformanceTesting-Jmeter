@@ -22,17 +22,13 @@ jobs:
       - name: Run JMeter Action
         uses: ./
         with:
-          testFilePath: tests/Jmeter.jmx
-          outputReportsFolder: reports/
-          args: "--loglevel INFO"
-          plugins: "jpgc-casutg"
+        testFilePath: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
+        outputReportsFolder: reports/
+        args: "--loglevel INFO"
+        plugins: "jpgc-casutg"
 
-      - name: Run More Than One JMeter Action
-        uses: ./
-        with:
-          testFilePath: tests/
-          outputReportsFolder: reports/
-          args: "--loglevel INFO"
+        - name: List files in tests directory
+       run: ls -l POC-PerformanceTesting-Jmeter/tests
 
       - uses: actions/upload-artifact@v1
         with:
