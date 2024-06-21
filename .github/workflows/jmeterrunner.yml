@@ -1,5 +1,5 @@
 ---
-name: Test JMeter Action
+name: Performance Test Jmeter
 
 on: 
   push:
