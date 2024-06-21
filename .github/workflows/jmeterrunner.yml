@@ -1,7 +1,7 @@
 ---
 name: Test JMeter Action
 
-on:
+on: 
   push:
     branches:
       - master
