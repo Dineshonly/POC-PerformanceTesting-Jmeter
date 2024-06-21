@@ -1,33 +1,68 @@
-name: Run JMeter Tests
+---
+name: Test JMeter Action
 
 on:
   push:
     branches:
-      - main  # Adjust this branch according to your setup
+      - master
+      - feature/*
+  pull_request:
+    branches: [master]
 
 jobs:
-  jmeter_tests:
+
+  action_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Lint all YAML files in the directory
+        uses: ibiqlik/action-yamllint@master
+
+      - name: Run JMeter Action
+        uses: ./
+        with:
+          testFilePath: tests/jmeter.jmx
+          outputReportsFolder: reports/
+          args: "--loglevel INFO"
+          plugins: "jpgc-casutg"
+
+      - name: Run More Than One JMeter Action
+        uses: ./
+        with:
+          testFilePath: tests/
+          outputReportsFolder: reports/
+          args: "--loglevel INFO"
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: jmeter-test-results
+          path: reports/
+
+  image_scan:
+    needs: action_build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Build Apache JMeter Image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: "localbuild/apache-jmeter-action:latest"
 
-    - name: Set up Java
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '11'
+      - name: Scan Apache JMeter Image
+        uses: anchore/scan-action@v2
+        id: scan
+        with:
+          image: "localbuild/apache-jmeter-action:latest"
+          acs-report-enable: true
+          # fail-build: false
+          # severity-cutoff: critical
 
-    - name: Run JMeter
-      run: |
-        wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz
-        tar -xf apache-jmeter-5.4.1.tgz
-        cd apache-jmeter-5.4.1/bin
-        ./jmeter -n -t 'Jmeter.jmx' -l test-results.jtl
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
 
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v2
-      with:
-        name: jmeter-results
-        path: apache-jmeter-5.4.1/bin/test-results.jtl
+      - name: Inspect action SARIF report
+        run: cat ${{ steps.scan.outputs.sarif }}
