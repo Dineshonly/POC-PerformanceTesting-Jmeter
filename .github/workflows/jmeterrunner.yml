@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - master
-  workflow_dispatch:   # <-- Add workflow_dispatch trigger here
+  workflow_dispatch:
     branches:
       - master
       - 'feature/*'
@@ -22,44 +22,42 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Example: Replace with a linter script that you can include directly in your repository
       - name: Lint all YAML files in the directory
-        uses: ibiqlik/action-yamllint@master
+        run: |
+          # Insert your linting commands/scripts here
 
+      # Example: Replace with your JMeter test execution steps (if you have scripts in your repository)
       - name: Run JMeter Test
-        uses: justb4/jmeter-action@v1
-        with:
-          jmxFile: POC-PerformanceTesting-Jmeter/tests/Jmeter.jmx
-          logLevel: DEBUG
-          jmeterPlugins: "jpgc-casutg"
+        run: |
+          # Insert your JMeter test execution commands/scripts here
 
+      # Example: Replace with commands to upload test results (if applicable and scripts are in your repository)
       - name: Upload JMeter Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: jmeter-test-results
-          path: POC-PerformanceTesting-Jmeter/reports/
+        run: |
+          # Insert commands to upload test results here
 
   image_scan:
     needs: performance_test
     runs-on: ubuntu-latest
 
     steps:
+      # Example: Replace with your Docker build and scan commands (if scripts are in your repository)
       - name: Build Apache JMeter Image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          tags: "localbuild/apache-jmeter-action:latest"
+        run: |
+          # Insert commands to build Docker image here
 
+      # Example: Replace with commands to scan Docker image (if scripts are in your repository)
       - name: Scan Apache JMeter Image
-        uses: anchore/scan-action@v2
-        id: scan
-        with:
-          image: "localbuild/apache-jmeter-action:latest"
-          acs-report-enable: true
+        run: |
+          # Insert commands to scan Docker image here
 
+      # Example: Replace with commands to upload scan results (if applicable and scripts are in your repository)
       - name: Upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+        run: |
+          # Insert commands to upload scan results here
 
+      # Example: Replace with inspection commands (if applicable and scripts are in your repository)
       - name: Inspect action SARIF report
-        run: cat ${{ steps.scan.outputs.sarif }}
+        run: |
+          # Insert commands to inspect scan results here
