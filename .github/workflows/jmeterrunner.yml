@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout
 
       # Example: Replace with a linter script that you can include directly in your repository
       - name: Lint all YAML files in the directory
