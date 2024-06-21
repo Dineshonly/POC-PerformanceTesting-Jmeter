@@ -22,7 +22,7 @@ jobs:
       - name: Run JMeter Action
         uses: ./
         with:
-          testFilePath: tests/jmeter.jmx
+          testFilePath: tests/Jmeter.jmx
           outputReportsFolder: reports/
           args: "--loglevel INFO"
           plugins: "jpgc-casutg"
